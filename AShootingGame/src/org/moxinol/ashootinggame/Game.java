@@ -2,6 +2,7 @@ package org.moxinol.ashootinggame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -21,11 +22,13 @@ public class Game extends Canvas implements Runnable {
      private BufferedImage backgroundImage = null;
      private BufferedImage image = null;
      private BufferedImage spriteSheet = null;
+     private boolean isShooting = false;
 
      private Player p;
+     private Controller c;
 
      public void init(){
-
+          requestFocus();
          ImageLoader loader = new ImageLoader();
 
          try {
@@ -35,12 +38,66 @@ public class Game extends Canvas implements Runnable {
            System.exit(1);
          }
 
+         addKeyListener(new KeyInput(this));
+
          try {
              p = new Player(200,200,this);
          } catch (IOException e) {
              e.printStackTrace();
          }
+
+         c = new Controller();
+
      }
+
+
+    public void keyPressed(KeyEvent e){
+       int key = e.getKeyCode();
+
+       if (key == KeyEvent.VK_UP){
+           p.setVelY(-5);
+       }
+       else if (key == KeyEvent.VK_DOWN){
+           p.setVelY(5);
+        }
+       else if (key == KeyEvent.VK_RIGHT){
+           p.setVelX(5);
+        }
+       else if (key == KeyEvent.VK_LEFT){
+           p.setVelX(-5);
+        }else if (key == KeyEvent.VK_SPACE || !isShooting){
+           try {
+               isShooting = true;
+               c.addBullet(new Bullet(p.getX() + 12,p.getY(),this));
+               //c.addBullet(new Bullet(p.getX(),p.getY(),this));
+              // c.addBullet(new Bullet(p.getX()+ 22,p.getY(),this));
+           } catch (IOException e1) {
+               e1.printStackTrace();
+           }
+       }
+
+    }
+    public void keyReleased(KeyEvent e){
+        int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_UP){
+            p.setVelY(0);
+        }
+        else if (key == KeyEvent.VK_DOWN){
+            p.setVelY(0);
+        }
+        else if (key == KeyEvent.VK_RIGHT){
+            p.setVelX(0);
+        }
+        else if (key == KeyEvent.VK_LEFT){
+            p.setVelX(0);
+        }
+        else if (key == KeyEvent.VK_SPACE ){
+           isShooting = false;
+        }
+
+    }
+
 
     public synchronized void start(){
         if (running){
@@ -100,6 +157,7 @@ public class Game extends Canvas implements Runnable {
 
     private void tick(){
      p.tick();
+     c.tick();
     }
 
     private void render(){
@@ -114,6 +172,7 @@ public class Game extends Canvas implements Runnable {
 
         g.drawImage(backgroundImage,0,0,getWidth(),getHeight(),this);
         p.render(g);
+        c.render(g);
         g.dispose();
         bs.show();
 
