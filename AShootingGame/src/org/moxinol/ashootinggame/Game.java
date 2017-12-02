@@ -24,6 +24,7 @@ public class Game extends Canvas implements Runnable {
      private BufferedImage spriteSheet = null;
      private boolean isShooting = false;
 
+     private Enemy e;
      private Player p;
      private Controller c;
 
@@ -44,6 +45,12 @@ public class Game extends Canvas implements Runnable {
              p = new Player(200,200,this);
          } catch (IOException e) {
              e.printStackTrace();
+         }
+
+         try {
+             e = new Enemy(0,300,this);
+         } catch (IOException e1) {
+             e1.printStackTrace();
          }
 
          c = new Controller();
@@ -158,6 +165,7 @@ public class Game extends Canvas implements Runnable {
     private void tick(){
      p.tick();
      c.tick();
+     e.tick();
     }
 
     private void render(){
@@ -172,6 +180,7 @@ public class Game extends Canvas implements Runnable {
 
         g.drawImage(backgroundImage,0,0,getWidth(),getHeight(),this);
         p.render(g);
+        e.render(g);
         c.render(g);
         g.dispose();
         bs.show();
