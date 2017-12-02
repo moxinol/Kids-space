@@ -2,71 +2,80 @@ package org.moxinol.ashootinggame;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
  * Created by moxinol on 12/2/2017.
  */
 public class Controller {
-    private LinkedList<Bullet> eBullets = new LinkedList<Bullet>();
-    private LinkedList<Enemy> enemies = new LinkedList<Enemy>();
+    private ArrayList<Bullet> pBullets = new ArrayList<Bullet>();
+    private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
 
     Bullet tempBullet;
-     Enemy tempEnemy;
-     private Game game;
+    Enemy tempEnemy;
+    private Game game;
 
     public Controller(Game game){
-      this.game = game;
+        this.game = game;
 
 
     }
 
     public void tick(){
-     tickBullets();
-     tickEnemy();
+        tickBullets();
+        tickEnemy();
     }
 
     public void render(Graphics g){
-       renderBullets(g);
-       renderEnemies(g);
+        renderBullets(g);
+        renderEnemies(g);
     }
 
 ////////BULLETS/////////
 
+
+    //ADD BULLET
     public void addBullet(Bullet bullet){
-        eBullets.add(bullet);
+        pBullets.add(bullet);
     }
 
+    //REMOVE BULLET
     public void removeBullet(Bullet bullet){
-        eBullets.remove(bullet);
+        pBullets.remove(bullet);
     }
 
+    //DRAW BULLETS
     public void renderBullets(Graphics g){
-        for (int i =0;i< eBullets.size();i++){
-            tempBullet = eBullets.get(i);
+        for (int i = 0; i< pBullets.size(); i++){
+            tempBullet = pBullets.get(i);
             tempBullet.render(g);
         }
     }
 
+    //UPDATE BULLETS
     public void tickBullets(){
-        for (int i =0;i< eBullets.size();i++){
-            tempBullet = eBullets.get(i);
+        for (int i = 0; i< pBullets.size(); i++){
+            tempBullet = pBullets.get(i);
             if (tempBullet.getY() < 0){
-                eBullets.remove(tempBullet);
+                pBullets.remove(tempBullet);
             }
             tempBullet.tick();
         }
     }
 ///////////7ENEMIES////////////
+
+    //ADD ENEMIES
     public void addEnemy(Enemy enemy){
         enemies.add(enemy);
     }
 
+    //REMOVE ENEMIES
     public void removeEnemy(Enemy enemy){
         enemies.remove(enemy);
     }
 
-
+    //DRAW ENEMIES
     public void renderEnemies(Graphics g){
         for (int i =0;i< enemies.size();i++){
             tempEnemy = enemies.get(i);
@@ -74,6 +83,7 @@ public class Controller {
         }
     }
 
+    //UPDATE ENEMIES
     public void tickEnemy(){
         for (int i =0;i< enemies.size();i++){
             tempEnemy = enemies.get(i);
@@ -84,9 +94,10 @@ public class Controller {
         }
     }
 
+    //CREATE ENEMIES
     public void createEnemies(int nEnemies){
         for (int i = 0;i < nEnemies;i++){
-          double  randomPos = Math.floor(Math.random() * 640);
+            double  randomPos = Math.floor(Math.random() * 640);
 
             try {
                 addEnemy(new Enemy(randomPos,0,game));
@@ -96,10 +107,22 @@ public class Controller {
         }
     }
 
-    public int getEnemies(){
+    //GETTERS AND SETTERS
+    //GET SIZE OF ENEMIES LIST
+    public int getEnemiesSize(){
         return enemies.size();
     }
+    //RETURNS ENEMY LIST
+    public ArrayList<Enemy> getEnemies(){
+        return enemies;
+    }
 
-
-
+    //RETURN BULLET LIST
+    public ArrayList<Bullet> getpBullets(){
+        return pBullets;
+    }
+    //RETURN BULLETS LIST SIZE
+    public int getpBulletsSize(){
+        return pBullets.size();
+    }
 }

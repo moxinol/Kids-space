@@ -15,9 +15,9 @@ public class KeyInput extends KeyAdapter{
     }
 
     public void keyPressed(KeyEvent e){
-     game.keyPressed(e);
+        game.keyPressed(e);
     }
     public void keyReleased(KeyEvent e){
-    game.keyReleased(e);
+        game.keyReleased(e);
     }
 }

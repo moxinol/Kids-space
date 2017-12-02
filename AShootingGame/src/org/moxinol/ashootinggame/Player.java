@@ -10,6 +10,7 @@ import java.io.IOException;
  */
 public class Player {
 
+    //FIELDS
     private double x;
     private double y;
     private int velX =0;
@@ -18,6 +19,8 @@ public class Player {
     private ImageLoader loader;
     private BufferedImage playerShip;
 
+    //CONSTRUCTOR
+
     public Player(double x,double y,Game game) throws IOException {
         this.x = x;
         this.y = y;
@@ -25,31 +28,39 @@ public class Player {
         loader = new ImageLoader();
         playerShip = loader.loadImage("/ship32x32.png");
 
+
+
         //SpriteSheet ss = new SpriteSheet(game.getSpriteSheet());
-       //playerShip = ss.grabImage(x,y,32,32)
+        //playerShip = ss.grabImage(x,y,32,32)
     }
 
+    //UPDATE PLAYER
     public void tick(){
-     x += velX;
-     y += velY;
+        x += velX;
+        y += velY;
 
-     if (x <= 0){
-         x = 0;
-     }
-     if (x >= Game.WIDTH - 20){
-         x = Game.WIDTH - 20;
-     }
-     if (y <= 0){
-         y = 0;
-     }
-     if (y >= Game.HEIGHT - 20){
-         y = Game.HEIGHT - 20 ;
-     }
+        if (x <= 0){
+            x = 0;
+        }
+        if (x >= Game.WIDTH - 20){
+            x = Game.WIDTH - 20;
+        }
+        if (y <= 0){
+            y = 0;
+        }
+        if (y >= Game.HEIGHT - 20){
+            y = Game.HEIGHT - 20 ;
+        }
     }
+
+    //DRAW PLAYER
     public void render(Graphics g){
-     g.drawImage(playerShip,(int)x,(int)y,null);
+        g.drawImage(playerShip,(int)x,(int)y,null);
     }
 
+
+
+    //GETTERS AND SETTERS
     public double getX(){
         return x;
     }
@@ -63,19 +74,23 @@ public class Player {
         this.y = y;
     }
 
-public int getVelX(){
+    public int getVelX(){
         return velX;
-}
-public int getVelY(){
-    return velY;
-}
+    }
+    public int getVelY(){
+        return velY;
+    }
 
-public void setVelX(int velX){
-    this.velX = velX;
-}
-public void setVelY(int velY){
-    this.velY = velY;
-}
+    public void setVelX(int velX){
+        this.velX = velX;
+    }
+    public void setVelY(int velY){
+        this.velY = velY;
+    }
 
+
+    public Rectangle getBounds(){
+        return new Rectangle((int)x,(int)y,32,32);
+    }
 
 }

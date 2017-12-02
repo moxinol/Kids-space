@@ -12,6 +12,7 @@ import java.io.IOException;
  */
 public class Game extends Canvas implements Runnable {
 
+    //FIELDS
     private static final long serialVersionUID = 1L;
     public static final int WIDTH = 640;
     public static final int HEIGHT = 640;
@@ -24,13 +25,13 @@ public class Game extends Canvas implements Runnable {
     private BufferedImage spriteSheet = null;
     private boolean isShooting = false;
     private Font f = new Font("Verdana",Font.BOLD,12);
-
-    private Enemy e;
     private Player p;
     private Controller c;
     private int score = 0;
     private int numberOfEnemies = 5;
+    private Bullet b;
 
+    //INIT THE GAME
     public void init(){
         requestFocus();
         ImageLoader loader = new ImageLoader();
@@ -45,10 +46,11 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(new KeyInput(this));
 
         try {
-            p = new Player(200,200,this);
+            p = new Player(WIDTH /2,HEIGHT /2 + HEIGHT / 4,this);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         c = new Controller(this);
 
         c.createEnemies(numberOfEnemies);
@@ -75,13 +77,15 @@ public class Game extends Canvas implements Runnable {
             p.setVelX(-5);
         }else if (key == KeyEvent.VK_SPACE || !isShooting){
             try {
-                isShooting = true;
-                c.addBullet(new Bullet(p.getX() + 12,p.getY(),this));
+
+                c.addBullet(new Bullet(p.getX() + 12,p.getY()));
                 //c.addBullet(new Bullet(p.getX(),p.getY(),this));
                 // c.addBullet(new Bullet(p.getX()+ 22,p.getY(),this));
+                isShooting = true;
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+
         }
 
     }
@@ -129,6 +133,8 @@ public class Game extends Canvas implements Runnable {
         System.exit(1);
     }
 
+
+    //GAME LOOP
     @Override
     public void run() {
         init();
@@ -158,22 +164,55 @@ public class Game extends Canvas implements Runnable {
                 frames = 0;
                 updates = 0;
             }
-            // System.out.println("WORKING!");
+
         }
         stop();
     }
-
+    //UPDATE GAME
     private void tick(){
-      if (c.getEnemies() == 0){
-        c.createEnemies(numberOfEnemies);
-      }
+        if (c.getEnemiesSize() == 0){
+            c.createEnemies(numberOfEnemies);
+        }
 
 
         p.tick();
         c.tick();
-        // e.tick();
+
+        //CHECK COLLISSION BETWEEN ENEMIES AND PLAYER
+        Rectangle pRec = p.getBounds();
+        // Rectangle eRec = e.getBounds();
+        for (int i = 0;i < c.getEnemiesSize();i++) {
+            Enemy enemy = c.getEnemies().get(i);
+            if (pRec.intersects(enemy.getBounds())){
+                System.out.println("CRASH");
+                enemy.setDead(true);
+                continue;
+            }
+        }
+        //CHECK COLISION BETWEEN ENEMIES AND PLAYER BULLETS
+        for (int i = 0;i< c.getpBulletsSize();i++) {
+            Bullet bullet = c.getpBullets().get(i);
+            for (int j = 0;j < c.getEnemiesSize();j++) {
+                Enemy enemy = c.getEnemies().get(j);
+                if (bullet.getBounds().intersects(enemy.getBounds())) {
+                    System.out.println("ENEMY HIT");
+                    i--;
+                    j--;
+                    c.removeBullet(bullet);
+                    c.removeEnemy(enemy);
+                    score++;
+
+                }
+
+            }
+        }
+
+
+
     }
 
+
+    //DRAW ALL ELEMENTS OF GAME
     private void render(){
 
         BufferStrategy bs = this.getBufferStrategy();
@@ -189,18 +228,22 @@ public class Game extends Canvas implements Runnable {
         g.drawImage(backgroundImage,0,0,getWidth(),getHeight(),this);
         paintInfo(g);
         p.render(g);
-       // e.render(g);
+        // e.render(g);
         c.render(g);
         g.dispose();
         bs.show();
 
     }
 
+    //DRAW SCREEN INFO
     public void paintInfo(Graphics g){
         g.setColor(Color.RED);
         g.setFont(f);
         g.drawString("Score "+ score,5,20);
     }
+
+
+
 
 
     public static void main(String[] args) {
