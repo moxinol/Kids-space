@@ -23,12 +23,14 @@ public class Game extends Canvas implements Runnable {
      private BufferedImage image = null;
      private BufferedImage spriteSheet = null;
      private boolean isShooting = false;
+     private Font f = new Font("Verdana",Font.BOLD,12);
 
      private Enemy e;
      private Player p;
      private Controller c;
+    private int score = 0;
 
-     public void init(){
+    public void init(){
           requestFocus();
          ImageLoader loader = new ImageLoader();
 
@@ -178,13 +180,22 @@ public class Game extends Canvas implements Runnable {
 
         Graphics g = bs.getDrawGraphics();
 
+
+
         g.drawImage(backgroundImage,0,0,getWidth(),getHeight(),this);
+        paintInfo(g);
         p.render(g);
         e.render(g);
         c.render(g);
         g.dispose();
         bs.show();
 
+    }
+
+    public void paintInfo(Graphics g){
+        g.setColor(Color.RED);
+        g.setFont(f);
+        g.drawString("Score "+ score,5,20);
     }
 
 
