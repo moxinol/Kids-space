@@ -17,73 +17,72 @@ public class Game extends Canvas implements Runnable {
     public static final int HEIGHT = 640;
 
     public final String TITLE ="Shoot!";
-     private boolean running = false;
-     private  Thread thread;
-     private BufferedImage backgroundImage = null;
-     private BufferedImage image = null;
-     private BufferedImage spriteSheet = null;
-     private boolean isShooting = false;
-     private Font f = new Font("Verdana",Font.BOLD,12);
+    private boolean running = false;
+    private  Thread thread;
+    private BufferedImage backgroundImage = null;
+    private BufferedImage image = null;
+    private BufferedImage spriteSheet = null;
+    private boolean isShooting = false;
+    private Font f = new Font("Verdana",Font.BOLD,12);
 
-     private Enemy e;
-     private Player p;
-     private Controller c;
+    private Enemy e;
+    private Player p;
+    private Controller c;
     private int score = 0;
+    private int numberOfEnemies = 5;
 
     public void init(){
-          requestFocus();
-         ImageLoader loader = new ImageLoader();
+        requestFocus();
+        ImageLoader loader = new ImageLoader();
 
-         try {
-             backgroundImage = loader.loadImage("/background.png");
-         }catch (IOException e){
-           e.printStackTrace();
-           System.exit(1);
-         }
+        try {
+            backgroundImage = loader.loadImage("/background.png");
+        }catch (IOException e){
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-         addKeyListener(new KeyInput(this));
+        addKeyListener(new KeyInput(this));
 
-         try {
-             p = new Player(200,200,this);
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
+        try {
+            p = new Player(200,200,this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        c = new Controller(this);
 
-         try {
-             e = new Enemy(0,300,this);
-         } catch (IOException e1) {
-             e1.printStackTrace();
-         }
+        c.createEnemies(numberOfEnemies);
 
-         c = new Controller();
 
-     }
+
+
+    }
 
 
     public void keyPressed(KeyEvent e){
-       int key = e.getKeyCode();
+        int key = e.getKeyCode();
 
-       if (key == KeyEvent.VK_UP){
-           p.setVelY(-5);
-       }
-       else if (key == KeyEvent.VK_DOWN){
-           p.setVelY(5);
+        if (key == KeyEvent.VK_UP){
+            p.setVelY(-5);
         }
-       else if (key == KeyEvent.VK_RIGHT){
-           p.setVelX(5);
+        else if (key == KeyEvent.VK_DOWN){
+            p.setVelY(5);
         }
-       else if (key == KeyEvent.VK_LEFT){
-           p.setVelX(-5);
+        else if (key == KeyEvent.VK_RIGHT){
+            p.setVelX(5);
+        }
+        else if (key == KeyEvent.VK_LEFT){
+            p.setVelX(-5);
         }else if (key == KeyEvent.VK_SPACE || !isShooting){
-           try {
-               isShooting = true;
-               c.addBullet(new Bullet(p.getX() + 12,p.getY(),this));
-               //c.addBullet(new Bullet(p.getX(),p.getY(),this));
-              // c.addBullet(new Bullet(p.getX()+ 22,p.getY(),this));
-           } catch (IOException e1) {
-               e1.printStackTrace();
-           }
-       }
+            try {
+                isShooting = true;
+                c.addBullet(new Bullet(p.getX() + 12,p.getY(),this));
+                //c.addBullet(new Bullet(p.getX(),p.getY(),this));
+                // c.addBullet(new Bullet(p.getX()+ 22,p.getY(),this));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
 
     }
     public void keyReleased(KeyEvent e){
@@ -102,7 +101,7 @@ public class Game extends Canvas implements Runnable {
             p.setVelX(0);
         }
         else if (key == KeyEvent.VK_SPACE ){
-           isShooting = false;
+            isShooting = false;
         }
 
     }
@@ -142,32 +141,37 @@ public class Game extends Canvas implements Runnable {
         long timer = System.currentTimeMillis();
 
         while (running){
-           long now = System.nanoTime();
-           delta +=(now - lastTime) / ns;
-           lastTime = now;
-           if (delta >= 1){
-               tick();
-               updates++;
-               delta--;
-           }
-           render();
-           frames++;
+            long now = System.nanoTime();
+            delta +=(now - lastTime) / ns;
+            lastTime = now;
+            if (delta >= 1){
+                tick();
+                updates++;
+                delta--;
+            }
+            render();
+            frames++;
 
-           if(System.currentTimeMillis() - timer > 1000){
-               timer += 1000;
-               System.out.println(updates +" Ticks, Frames "+ frames);
-               frames = 0;
-               updates = 0;
-           }
-           // System.out.println("WORKING!");
+            if(System.currentTimeMillis() - timer > 1000){
+                timer += 1000;
+                System.out.println(updates +" Ticks, Frames "+ frames);
+                frames = 0;
+                updates = 0;
+            }
+            // System.out.println("WORKING!");
         }
-       stop();
+        stop();
     }
 
     private void tick(){
-     p.tick();
-     c.tick();
-     e.tick();
+      if (c.getEnemies() == 0){
+        c.createEnemies(numberOfEnemies);
+      }
+
+
+        p.tick();
+        c.tick();
+        // e.tick();
     }
 
     private void render(){
@@ -185,7 +189,7 @@ public class Game extends Canvas implements Runnable {
         g.drawImage(backgroundImage,0,0,getWidth(),getHeight(),this);
         paintInfo(g);
         p.render(g);
-        e.render(g);
+       // e.render(g);
         c.render(g);
         g.dispose();
         bs.show();
