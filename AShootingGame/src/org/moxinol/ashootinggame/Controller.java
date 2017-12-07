@@ -11,9 +11,10 @@ import java.util.LinkedList;
 public class Controller {
     private ArrayList<Bullet> pBullets = new ArrayList<Bullet>();
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-
+    private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
     Bullet tempBullet;
     Enemy tempEnemy;
+    Explosion tempExplosion;
     private Game game;
 
     public Controller(Game game){
@@ -27,9 +28,10 @@ public class Controller {
         tickEnemy();
     }
 
-    public void render(Graphics g){
+    public void render(Graphics g)  {
         renderBullets(g);
         renderEnemies(g);
+        renderExplosion(g);
     }
 
 ////////BULLETS/////////
@@ -103,6 +105,26 @@ public class Controller {
                 addEnemy(new Enemy(randomPos,0,game));
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+//EXPLOSIONS
+    //ADD EXPLOSION
+    public void addExplosion(Explosion explosion){
+        explosions.add(explosion);
+    }
+
+    //REMOVE EXPLOSION
+    public void removeExplosion(Explosion explosion){
+        explosions.remove(explosion);
+    }
+
+    //DRAW EXPLOSIONS
+    public void renderExplosion(Graphics g)  {
+        for (int i = 0; i< explosions.size(); i++){
+            tempExplosion = explosions.get(i);
+            if (!tempExplosion.isDone()) {
+                tempExplosion.render(g);
             }
         }
     }

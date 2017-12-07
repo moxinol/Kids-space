@@ -196,6 +196,7 @@ public class Game extends Canvas implements Runnable {
                 Enemy enemy = c.getEnemies().get(j);
                 if (bullet.getBounds().intersects(enemy.getBounds())) {
                     System.out.println("ENEMY HIT");
+                    c.addExplosion(new Explosion(enemy.getX(),enemy.getY()));
                     i--;
                     j--;
                     c.removeBullet(bullet);
